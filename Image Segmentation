@@ -1,0 +1,27 @@
+import cv2
+import numpy as np
+
+img = cv2.imread('C:\\Users\\DELL\\Desktop\\ml\\image_segmentation\\bottle1.jpg')
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Apply thresholding to the image
+ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+
+# Find the contours of the image
+contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+# Create a mask for the image
+mask = np.zeros(img.shape[:2], np.uint8)
+
+# Iterate through the contours and draw them on the mask
+for c in contours:
+    cv2.drawContours(mask, [c], -1, 255, -1)
+
+# Apply the mask to the image
+segmented_image = cv2.bitwise_and(img, img, mask=mask)
+
+# Show the segmented image
+cv2.imshow('Segmented Image', segmented_image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
